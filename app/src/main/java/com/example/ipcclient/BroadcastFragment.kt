@@ -3,6 +3,8 @@ package com.example.ipcclient
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import android.os.Process
+import android.os.Process.myPid
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -79,7 +81,7 @@ class BroadcastFragment : Fragment(), View.OnClickListener{
         //Define an explicit intent containing the package name of the server and the class name of the receiver so that only a certain application can listen to the broadcast.
         val intent = Intent()
         intent.putExtra(Constants.PACKAGE_NAME, context?.packageName)
-        intent.putExtra(Constants.PID, android.os.Process.myPid().toString())
+        intent.putExtra(Constants.PID, myPid().toString())
         intent.putExtra(Constants.DATA, binding.edtClientData.text.toString())
         intent.component = ComponentName("com.example.ipcclient.exampleserver","com.example.ipcclient.exampleserver.IPCBroadcastReceiver")
         activity?.applicationContext?.sendBroadcast(intent)

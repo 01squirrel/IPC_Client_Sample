@@ -13,8 +13,8 @@ import java.util.Collections
  * @author guoyang
  */
 class SharedPrefUtils private constructor(mContext: Context, spName: String?) {
-    private val sp: SharedPreferences
-    private val editor: Editor
+    private val sp: SharedPreferences = mContext.getSharedPreferences(spName, Context.MODE_PRIVATE)
+    private val editor: Editor = sp.edit()
 
     /**
      * SPUtils构造函数
@@ -24,8 +24,6 @@ class SharedPrefUtils private constructor(mContext: Context, spName: String?) {
      * @param spName spName
      */
     init {
-        sp = mContext.getSharedPreferences(spName, Context.MODE_PRIVATE)
-        editor = sp.edit()
         editor.apply()
     }
 
@@ -287,7 +285,7 @@ class SharedPrefUtils private constructor(mContext: Context, spName: String?) {
                 mSharedPrefUtils?.let {
                     return it
                 }
-                val instance = SharedPrefUtils(mContext,"IPC_shared")
+                val instance = SharedPrefUtils(mContext,"default_shared")
                 mSharedPrefUtils = instance
                 instance
             }

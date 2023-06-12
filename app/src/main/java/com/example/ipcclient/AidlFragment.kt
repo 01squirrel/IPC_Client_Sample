@@ -1,9 +1,13 @@
 package com.example.ipcclient
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.fragment.app.Fragment
@@ -11,7 +15,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.ipcclient.databinding.FragmentAidlBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -30,6 +38,7 @@ class AidlFragment : Fragment(), ServiceConnection, View.OnClickListener {
     private val binding get() = _binding!!
     var iRemoteServe: IIPCExample? = null
     private var connected = false
+    private var manager: NotificationManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +59,7 @@ class AidlFragment : Fragment(), ServiceConnection, View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnConnect.setOnClickListener(this)
+        manager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
     }
 
     override fun onDestroyView() {
@@ -77,7 +87,7 @@ class AidlFragment : Fragment(), ServiceConnection, View.OnClickListener {
         val intent = Intent("aidlexample")
         val pack = IIPCExample::class.java.`package`
         pack?.let {
-            intent.setPackage(pack.name)
+            intent.setPackage(it.name)
             activity?.applicationContext?.bindService(intent, this, Context.BIND_AUTO_CREATE)
         }
     }
@@ -117,6 +127,13 @@ class AidlFragment : Fragment(), ServiceConnection, View.OnClickListener {
             binding.edtClientData.text.toString()
         )
         connected = true
+        context?.let { makeStatusNotification("Service connected success!", it) }
+//        val notice = Notification.Builder(context)
+//            .setContentTitle("IPC AIDL")
+//            .setContentText("Service connected success!")
+//            .setWhen(System.currentTimeMillis())
+//            .build()
+//        manager?.notify(1,notice)
     }
 
     override fun onServiceDisconnected(p0: ComponentName?) {
@@ -124,5 +141,24 @@ class AidlFragment : Fragment(), ServiceConnection, View.OnClickListener {
             .show()
         iRemoteServe = null
         connected = false
+    }
+    private fun makeStatusNotification(message: String, context:Context) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+            val name = "SERVICE NOTICE"
+            val description = "Shows notifications whenever work starts"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("VERBOSE_NOTIFICATION",name,importance)
+            val manager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            channel.description = description
+            manager.createNotificationChannel(channel)
+        }
+
+        val notification = NotificationCompat.Builder(context,"VERBOSE_NOTIFICATION")
+            .setContentText(message)
+            .setSmallIcon(R.drawable.ic_stat_name)
+            .setContentTitle("Service Starting")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVibrate(longArrayOf(0))
+        NotificationManagerCompat.from(context).notify(1,notification.build())
     }
 }

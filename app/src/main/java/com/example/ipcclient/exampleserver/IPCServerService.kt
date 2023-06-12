@@ -2,11 +2,7 @@ package com.example.ipcclient.exampleserver
 
 import android.app.Service
 import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import android.os.IBinder
-import android.os.Message
-import android.os.Messenger
+import android.os.*
 import android.text.TextUtils
 import com.example.ipcclient.Constants.CONNECTION_COUNT
 import com.example.ipcclient.Constants.DATA
@@ -18,12 +14,13 @@ class IPCServerService : Service() {
 
     companion object {
         var connectCount: Int = 0
-        val NOT_SENT = "not set!!"
+        const val NOT_SENT = "not set!!"
     }
 
+    //AIDL
     private val binder = object: IIPCExample.Stub() {
         override fun getPid(): Int {
-            return android.os.Process.myPid()
+            return Process.myPid()
         }
 
         override fun getConnectionCount(): Int = connectCount
@@ -42,7 +39,8 @@ class IPCServerService : Service() {
 
     }
 
-    internal inner class IncomingHandler: Handler() {
+    //Messenger
+    internal inner class IncomingHandler: Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             val receivedBundle = msg.data
@@ -55,7 +53,7 @@ class IPCServerService : Service() {
             val message = Message.obtain(this@IncomingHandler,0)
             val bundle = Bundle()
             bundle.putInt(CONNECTION_COUNT, connectCount)
-            bundle.putInt(PID,android.os.Process.myPid())
+            bundle.putInt(PID,Process.myPid())
             msg.data = bundle
             msg.replyTo.send(message)
         }

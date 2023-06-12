@@ -1,5 +1,7 @@
 package com.example.ipcclient
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -7,11 +9,14 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.preferencesDataStore
@@ -45,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             navView.setupWithNavController(navController)
         }
         setContentView(binding.root)
-        val share = SharedPrefUtils.getInstance(this)
+        val share = SharedPrefUtils.getInstance(applicationContext)
         binding.fab.setOnClickListener{
             run {
                 if (isDarkTheme(this)) {
@@ -63,6 +68,11 @@ class MainActivity : AppCompatActivity() {
     private fun isDarkTheme(context: Context): Boolean {
         val flag: Int = Configuration.UI_MODE_NIGHT_MASK and context.resources.configuration.uiMode
         return flag == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        return super.onTouchEvent(event)
     }
 
     fun isHideInput(view: View, me: MotionEvent): Boolean {

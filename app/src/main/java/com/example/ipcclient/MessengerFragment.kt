@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.ipcclient.Constants.CONNECTION_COUNT
 import com.example.ipcclient.Constants.PID
 import com.example.ipcclient.databinding.FragmentMessengerBinding
@@ -119,6 +120,7 @@ class MessengerFragment : Fragment(),View.OnClickListener,ServiceConnection{
 
     override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
         serverMessenger = Messenger(p1)
+        Toast.makeText(requireContext(),"SERVICE CONNECT",Toast.LENGTH_SHORT).show()
         // Ready to send messages to remote service
         sendMessageToServer()
     }
@@ -134,16 +136,17 @@ class MessengerFragment : Fragment(),View.OnClickListener,ServiceConnection{
         val bundle = Bundle()
         bundle.putString(Constants.DATA,viewBinding.edtClientData.text.toString())
         bundle.putString(Constants.PACKAGE_NAME,context?.packageName)
-        bundle.putInt(Constants.PID,Process.myPid())
+        bundle.putInt(PID,Process.myPid())
         message.data = bundle
         message.replyTo = clientMessenger // we offer our Messenger object for communication to be two-way
         try {
             serverMessenger?.send(message)
         } catch (e: RemoteException) {
             e.printStackTrace()
-        } finally {
-            message.recycle()
         }
+//        finally {
+//            message.recycle()
+//        }
     }
     private fun clearUI(){
         viewBinding.txtServerPid.text = ""
