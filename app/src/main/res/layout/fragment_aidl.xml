@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:focusableInTouchMode="true">
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,7 +22,8 @@
         android:hint="@string/salut"
         android:inputType="text"
         android:textAlignment="center"
-        android:textSize="35sp" />
+        android:textSize="35sp"
+        android:autofillHints="text" />
 
     <Button
         android:id="@+id/btn_connect"

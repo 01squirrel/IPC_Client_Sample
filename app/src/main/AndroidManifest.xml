@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.ipcclient">
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:allowBackup="true"
@@ -11,9 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IPCClient"
         tools:targetApi="31">
-        <activity
-            android:name=".exampleserver.IPCServerActivity"
-            android:exported="false" />
+        <activity android:name=".exampleserver.IPCServerActivity"
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -35,7 +37,8 @@
         </service>
         <receiver android:name=".exampleserver.IPCBroadcastReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.POST_NOTIFICATIONS">
             <intent-filter>
                 <action android:name="com.example.ipcclient"/>
             </intent-filter>

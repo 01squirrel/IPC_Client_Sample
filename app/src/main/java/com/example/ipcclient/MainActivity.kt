@@ -1,36 +1,22 @@
 package com.example.ipcclient
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.getSystemService
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.ipcclient.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.util.prefs.Preferences
-import kotlin.properties.ReadOnlyProperty
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -70,12 +56,19 @@ class MainActivity : AppCompatActivity() {
         return flag == Configuration.UI_MODE_NIGHT_YES
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-
-        return super.onTouchEvent(event)
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev != null) {
+            if (ev.action == MotionEvent.ACTION_DOWN) {
+                val view = currentFocus
+                if (view != null && isHideInput(view,ev)) {
+                    hideSoftInput(view)
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
-    fun isHideInput(view: View, me: MotionEvent): Boolean {
+    private fun isHideInput(view: View, me: MotionEvent): Boolean {
         if(view is EditText) {
             val location = intArrayOf(0,0)
             view.getLocationInWindow(location)
@@ -88,10 +81,11 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    fun hideSoftInput(v: View){
+    private fun hideSoftInput(v: View){
         if(v.windowToken != null) {
             val manager = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             manager.hideSoftInputFromWindow(v.windowToken,InputMethodManager.HIDE_NOT_ALWAYS)
+            v.clearFocus()
         }
     }
 }

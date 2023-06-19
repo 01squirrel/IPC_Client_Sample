@@ -83,6 +83,7 @@ class BroadcastFragment : Fragment(), View.OnClickListener{
         intent.putExtra(Constants.PACKAGE_NAME, context?.packageName)
         intent.putExtra(Constants.PID, myPid().toString())
         intent.putExtra(Constants.DATA, binding.edtClientData.text.toString())
+        intent.action = "com.example.ipcclient"
         intent.component = ComponentName("com.example.ipcclient.exampleserver","com.example.ipcclient.exampleserver.IPCBroadcastReceiver")
         activity?.applicationContext?.sendBroadcast(intent)
     }
